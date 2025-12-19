@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflict Tracker API</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 2rem; background-color: #f4f4f9; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        tr:hover { background-color: #f1f1f1; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
+        .ACTIVE { background-color: #e74c3c; color: white; }
+        .FROZEN { background-color: #3498db; color: white; }
+        .ENDED { background-color: #2ecc71; color: white; }
+    </style>
+</head>
+<body>
+
+<h1>🌍 Conflict Tracker Dashboard</h1>
+<p>Consumiendo datos de: <code>/api/v1/conflicts</code></p>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Conflicto</th>
+        <th>Estado</th>
+        <th>Fecha Inicio</th>
+        <th>Países Involucrados</th>
+        <th>Facciones</th>
+    </tr>
+    </thead>
+    <tbody id="conflicts-table-body">
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tableBody = document.getElementById('conflicts-table-body');
+
+        fetch('/api/v1/conflicts')
+            .then(response => {
+                if (!response.ok) throw new Error('Error en la red');
+                return response.json();
+            })
+            .then(data => {
+                data.forEach(conflict => {
+                    // Crear fila
+                    const row = document.createElement('tr');
+
+                    // Formatear la lista de países
+                    const countriesList = conflict.countryNames
+                        ? conflict.countryNames.join(', ')
+                        : 'N/A';
+
+                    row.innerHTML = `
+                        <td>${conflict.id}</td>
+                        <td><strong>${conflict.name}</strong><br><small>${conflict.description.substring(0, 50)}...</small></td>
+                        <td><span class="status-badge ${conflict.status}">${conflict.status}</span></td>
+                        <td>${conflict.startDate}</td>
+                        <td>${countriesList}</td>
+                        <td>${conflict.numberOfFactions}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Hubo un error:', error);
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:red;">Error cargando datos de la API. Asegúrate de que el backend está corriendo.</td></tr>`;
+            });
+    });
+</script>
+</body>
+</html>
