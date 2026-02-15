@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Conflictos</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 0.8em; }
+        .ACTIVE { background-color: #e74c3c; }
+        .FROZEN { background-color: #3498db; }
+        .ENDED { background-color: #2ecc71; }
+    </style>
+</head>
+<body>
+
+<h1>🌍 Listado de Conflictos Internacionales</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Fecha Inicio</th>
+        <th>Estado</th>
+        <th>Descripción (Corta)</th>
+        <th>Países</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="conflict : ${conflicts}">
+        <td th:text="${conflict.name}">Nombre del conflicto</td>
+
+        <td th:text="${conflict.startDate}">2023-01-01</td>
+
+        <td>
+                    <span th:text="${conflict.status}"
+                          th:class="'badge ' + ${conflict.status}">
+                        STATUS
+                    </span>
+        </td>
+
+        <td th:text="${#strings.length(conflict.description) > 50 ? #strings.substring(conflict.description,0,50) + '...' : conflict.description}">
+            Descripción...
+        </td>
+
+        <td th:text="${#strings.listJoin(conflict.countryNames, ', ')}">
+            País A, País B
+        </td>
+    </tr>
+
+    <tr th:if="${#lists.isEmpty(conflicts)}">
+        <td colspan="5" style="text-align: center;">No hay conflictos registrados.</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
