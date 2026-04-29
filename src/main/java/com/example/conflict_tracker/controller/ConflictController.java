@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/conflicts")
-@CrossOrigin(origins = "*") // Permite peticiones desde el frontend local
+@CrossOrigin(origins = "${FRONTEND_URL}") // Permite peticiones desde el frontend local
 public class ConflictController {
 
     private final ConflictService conflictService;
